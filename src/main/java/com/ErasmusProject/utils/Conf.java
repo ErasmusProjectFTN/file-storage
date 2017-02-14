@@ -12,14 +12,17 @@ import java.io.File;
 @Scope("singleton")
 public class Conf {
     private Config config;
+
     private String storageRoot;
     private String userStorageRoot;
+    private String userPdf;
 
     @PostConstruct
     public void init() {
         config = ConfigFactory.load("application.conf");
         storageRoot = config.getString("root");
         userStorageRoot = config.getString("user_storage_rel");
+        userPdf = config.getString("pdf");
     }
 
     public String getStorageRoot() {
@@ -27,11 +30,16 @@ public class Conf {
     }
 
     public String getUserStorageRoot() {
-        return storageRoot + File.pathSeparator + userStorageRoot;
+        return storageRoot + File.separator + userStorageRoot;
+    }
+
+    public String getUserPdf() {
+        return userPdf;
     }
 
     @Override
     public String toString() {
         return "Conf{" + "storageRoot='" + storageRoot + '\'' + ", userStorageRoot='" + userStorageRoot + '\'' + '}';
     }
+
 }
