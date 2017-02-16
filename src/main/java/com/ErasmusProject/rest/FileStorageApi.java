@@ -1,6 +1,7 @@
 package com.ErasmusProject.rest;
 
 import com.ErasmusProject.storage.PDFStorage;
+import com.ErasmusProject.storage.UserFiles;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,21 +34,21 @@ public class FileStorageApi {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/user/pdf/{userid}", method = RequestMethod.GET)
-    public String listUserPdfs(@PathVariable(name = "userid") String userid) {
-        return "OK";
+    @RequestMapping(path = "/user/pdf/{userid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserFiles listUserPdfs(@PathVariable(name = "userid") String userid) throws IOException {
+
+        return storage.listUserFiles(userid);
     }
 
     @RequestMapping(path = "/user/pdf/{userid}/zip", method = RequestMethod.GET, produces = "application/zip")
     public void getAllZip(@PathVariable(name = "userid") String userid, HttpServletResponse response) {
         try {
-            //setting headers
             response.setStatus(HttpServletResponse.SC_OK);
             response.addHeader("Content-Disposition", "attachment; filename=\"user_pdfs.zip\"");
             ZipOutputStream zos = storage.zip(userid, response.getOutputStream());
             zos.close();
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
 
     }
@@ -56,16 +57,13 @@ public class FileStorageApi {
     public void getPDF(@PathVariable(name = "userid") String userid, @PathVariable(name = "fileid") String fileid,
             HttpServletResponse response) {
 
-        // Get your file stream from wherever.
         InputStream myStream = null;
         try {
             myStream = storage.readOne(userid, fileid);
 
-            // Set the content type and attachment header.
             response.addHeader("Content-disposition", "attachment;filename=" + fileid);
             response.setContentType("application/pdf");
 
-            // Copy the stream to the response's output stream.
             IOUtils.copy(myStream, response.getOutputStream());
             response.flushBuffer();
 

@@ -80,4 +80,13 @@ public class PDFStorageImpl implements PDFStorage {
         if (!file.exists())
             file.mkdirs();
     }
+
+    @Override
+    public UserFiles listUserFiles(String userID) throws IOException {
+        File file = new File(makePath(userID, ""));
+        if(!file.exists())
+            throw new FileNotFoundException("There is no storage for user: "+userID);
+
+        return new UserFiles(userID, file.listFiles());
+    }
 }

@@ -17,4 +17,6 @@ public interface PDFStorage {
 
     public void initialize(String userId);
 
+    public UserFiles listUserFiles(String userID) throws IOException;
+
 }
