@@ -76,7 +76,7 @@ public class FileStorageApi {
     @RequestMapping(path = "/user/pdf", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity putPDF(@RequestParam(name = "userid") String userid,
             @RequestParam(name = "file", required = true) MultipartFile file) {
-
+    	initialize(userid);
         try {
             storage.write(userid, file.getOriginalFilename(), file);
         } catch (IOException e) {
